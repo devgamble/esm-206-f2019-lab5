@@ -1,0 +1,78 @@
+---
+title: "Lab 5"
+author: "Devin Gamble"
+date: "10/28/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Objectives
+1. Getting counts for ...
+2. Use {lubridate} to parse dates
+3. Find confidence intervals & do t-test
+4. Heatmap with geom_tile()
+
+```{r, include = FALSE, message = FALSE}
+library(tidyverse)
+library(here)
+library(janitor)
+
+```
+
+```{r, message = FALSE}
+#Import lobster data
+
+lobster_abundance <- read_csv(here("data", "lobster_abundance.csv"), 
+                              na = "-99999") %>% 
+  clean_names()
+
+#Make sure each observation has its own row - change from freq. data to case data (tidy format)
+
+```
+
+Use tidyr::uncount() function to expand a frequency variable
+
+```{r, message = FALSE}
+lobster_tidy <- lobster_abundance %>% 
+  uncount(lobster_count) #Pass column for which to expand count characters - each obs. now has its own row - length of df is now larger
+## This removes 0s!!!! Check args for way to retain 0s
+
+```
+
+EDA
+
+```{r}
+ggplot(data = lobster_tidy, aes(x = site, y = size_mm)) + 
+  geom_jitter(aes(color = site), width = .2,
+              alpha = .3)
+
+ggplot(data = lobster_tidy, aes(x = site, y = size_mm)) + 
+  geom_violin(aes(color = site), 
+              alpha = .3)
+
+ggplot(data = lobster_tidy, aes(x = size_mm)) + 
+  geom_histogram(aes(fill = site)) +
+  facet_wrap(~site, scales = "free") #scales will differ for each group, default is false
+
+
+#Check normality with qq plot
+ggplot(data = lobster_tidy, aes(sample = size_mm)) + 
+  geom_qq(size = .5) + #default quantiles are normal
+  facet_wrap(~site)
+
+
+
+```
+
+QQplot shows most distributions to be normally distributed, though there are some outliers  
+
+
+Now, let's parse dates
+
+
+
+
+
